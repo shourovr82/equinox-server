@@ -23,7 +23,7 @@ async function run() {
       const newpost = req.body;
       console.log(newpost)
       // const result = await postsCollections.insertOne(newpost)
-      // res.send(result);
+      res.send({ name: 'shafin' });
     })
 
 
