@@ -16,11 +16,31 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function run() {
   try {
-    const postsCollections = client.db('equinox').collection('allPosts')
+    const postsCollections = client.db('equinox').collection('allPosts');
+    const logCollections = client.db('equinox').collection('logConnections');
+
+
+
 
 
     app.post('/poststatus', async (req, res) => {
       const newpost = req.body;
+      let i = 0;
+
+      logCollections.findOne({}, function (err, result) {
+        if (err) throw err;
+        const old = parseInt(result.logConnections);
+        const query = {};
+        const update = { $set: { logConnections: old + 1 } };
+        const options = { upsert: true };
+        logCollections.updateOne(query, update, options);
+
+      });
+
+
+
+
+
       const result = await postsCollections.insertOne(newpost)
       res.send(result);
     })
