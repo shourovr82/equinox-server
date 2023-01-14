@@ -25,8 +25,6 @@ async function run() {
 
     app.post('/poststatus', async (req, res) => {
       const newpost = req.body;
-      let i = 0;
-
       logCollections.findOne({}, function (err, result) {
         if (err) throw err;
         const old = parseInt(result.logConnections);
@@ -37,24 +35,28 @@ async function run() {
 
       });
 
-
-
-
-
       const result = await postsCollections.insertOne(newpost)
       res.send(result);
     })
 
+    app.get('/getlogconnections', async (req, res) => {
+      const query = {};
+      const newLog = await logCollections.find(query).toArray();
+      res.send(newLog);
+    })
+
+
     app.get('/getallposts', async (req, res) => {
       const query = {};
       const result = await postsCollections.find(query).toArray();
-      res.send(result);
+      const sortedPosts = (result.sort((a, b) => new Date(b.date) - new Date(a.date)));
+      res.send(sortedPosts);
     })
 
     //  delete post
     app.delete('/deletepost/:id', async (req, res) => {
       const postId = req.params.id;
-      console.log(postId)
+      // console.log(postId)
       const query = {
         _id: ObjectId(postId)
       }
